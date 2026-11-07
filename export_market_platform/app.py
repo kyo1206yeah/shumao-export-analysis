@@ -2261,6 +2261,46 @@ with tab6:
                     key="download_ai_report"
                 )
 
+    # DeepSeek API 连接测试
+    st.divider()
+    st.subheader("DeepSeek API 测试")
+    
+    if st.button("测试 DeepSeek API 连接"):
+        try:
+            client = OpenAI(
+                api_key=st.secrets["DEEPSEEK_API_KEY"],
+                base_url="https://api.deepseek.com"
+            )
+    
+            response = client.chat.completions.create(
+                model="deepseek-flash",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "你是一个简洁的中文数据分析助手。"
+                    },
+                    {
+                        "role": "user",
+                        "content": "请用一句话介绍出口数据分析的价值。"
+                    }
+                ],
+                max_tokens=150,
+                temperature=0.3,
+                extra_body={
+                    "thinking": {
+                        "type": "disabled"
+                    }
+                }
+            )
+    
+            answer = response.choices[0].message.content
+    
+            st.success("DeepSeek API 连接成功！")
+            st.write(answer)
+    
+        except Exception as e:
+            st.error(f"API 调用失败：{e}")
+
 with tab7:
     st.markdown("#### 数据质量检查")
     qa = [
@@ -2285,47 +2325,6 @@ with tab7:
 
 st.markdown("---")
 st.caption("口径说明：当前总出口额为所选范围内各贸易伙伴记录的加总。若源文件含有汇总行、特殊贸易伙伴或统计口径差异，需先核验后再解释。HHI 为描述性市场集中度指标，不直接等同于市场风险。")
-
-# DeepSeek API 连接测试
-st.divider()
-st.subheader("DeepSeek API 测试")
-
-if st.button("测试 DeepSeek API 连接"):
-    try:
-        client = OpenAI(
-            api_key=st.secrets["DEEPSEEK_API_KEY"],
-            base_url="https://api.deepseek.com"
-        )
-
-        response = client.chat.completions.create(
-            model="deepseek-flash",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "你是一个简洁的中文数据分析助手。"
-                },
-                {
-                    "role": "user",
-                    "content": "请用一句话介绍出口数据分析的价值。"
-                }
-            ],
-            max_tokens=150,
-            temperature=0.3,
-            extra_body={
-                "thinking": {
-                    "type": "disabled"
-                }
-            }
-        )
-
-        answer = response.choices[0].message.content
-
-        st.success("DeepSeek API 连接成功！")
-        st.write(answer)
-
-    except Exception as e:
-        st.error(f"API 调用失败：{e}")
-
 
 with tab8:
     st.subheader("综合出口市场分析报告")
